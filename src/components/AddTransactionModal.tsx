@@ -3,19 +3,10 @@
 import React, { useState } from "react";
 import { X, Plus, AlertCircle } from "lucide-react";
 
-interface AddTransactionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAddTransaction: (transaction: {
-    description: string;
-    value: number;
-    category: string;
-    type: "income" | "expense";
-    date: string;
-  }) => void;
-}
+// * Types/Interfaces
+import { IAddTransactionModalProps } from "@/types";
 
-export default function AddTransactionModal({ isOpen, onClose, onAddTransaction }: AddTransactionModalProps) {
+export default function AddTransactionModal({ isOpen, onClose, onAddTransaction }: IAddTransactionModalProps) {
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("");
   const [type, setType] = useState<"income" | "expense">("expense");

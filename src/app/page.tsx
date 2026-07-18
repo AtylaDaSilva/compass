@@ -7,14 +7,8 @@ import Dashboard from "@/components/Dashboard";
 import AddTransactionModal from "@/components/AddTransactionModal";
 import { FolderHeart, Sparkles, ShieldCheck, Target, ArrowLeftRight } from "lucide-react";
 
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  category: string;
-  type: "income" | "expense";
-  value: number;
-}
+// * Types/Interfaces
+import { ITransaction } from "@/types";
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -22,7 +16,7 @@ export default function Home() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Initial transactions set matching the image
-  const [transactions, setTransactions] = useState<Transaction[]>([
+  const [transactions, setTransactions] = useState<ITransaction[]>([
     {
       id: "1",
       date: "24/06/2026",
@@ -73,7 +67,7 @@ export default function Home() {
     type: "income" | "expense";
     date: string;
   }) => {
-    const tx: Transaction = {
+    const tx: ITransaction = {
       id: String(Date.now()),
       ...newTx
     };

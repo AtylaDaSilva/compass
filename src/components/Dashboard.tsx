@@ -13,17 +13,11 @@ import {
   Pie
 } from "recharts";
 
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  category: string;
-  type: "income" | "expense";
-  value: number;
-}
+// * Types/Interfaces
+import { ITransaction } from "@/types";
 
 interface DashboardProps {
-  transactions: Transaction[];
+  transactions: ITransaction[];
   onOpenAddModal: () => void;
 }
 
