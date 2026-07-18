@@ -10,8 +10,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Carbon Finance - Dashboard",
-  description: "Personal Finance Management dashboard with Luminous Carbon design.",
+  title: "Compass - Finanças Pessoais",
+  description: "Gerenciamento de finanças pessoais, entradas, despesas com listas, dashboards e relatórios.",
 };
 
 export default function RootLayout({
