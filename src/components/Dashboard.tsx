@@ -18,10 +18,19 @@ import { ITransaction } from "@/types";
 
 interface DashboardProps {
   transactions: ITransaction[];
+  baseBalance: number;
+  historicalChartData: { name: string; value: number; active: boolean }[];
+  juneBaseExpense: number;
   onOpenAddModal: () => void;
 }
 
-export default function Dashboard({ transactions, onOpenAddModal }: DashboardProps) {
+export default function Dashboard({ 
+  transactions, 
+  baseBalance, 
+  historicalChartData, 
+  juneBaseExpense, 
+  onOpenAddModal 
+}: DashboardProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [timeRange, setTimeRange] = useState<"6m" | "1y">("6m");
 
@@ -29,10 +38,6 @@ export default function Dashboard({ transactions, onOpenAddModal }: DashboardPro
     setIsMounted(true);
   }, []);
 
-  // Compute stats based on transactions
-  // Initial starting values matching the image
-  const baseBalance = 14250.00;
-  
   // Calculate dynamically
   const totalRevenue = transactions
     .filter(t => t.type === "income")
@@ -47,13 +52,13 @@ export default function Dashboard({ transactions, onOpenAddModal }: DashboardPro
   // Chart data for "Evolução de Gastos" (JAN - JUN)
   // We'll map the current transactions into the JUN month data, 
   // and keep historical data static to match the dashboard design.
+  const currentJuneExpense = transactions
+    .filter(t => t.type === "expense" && t.date.includes("/06/"))
+    .reduce((sum, t) => sum + t.value, 0);
+
   const chartData = [
-    { name: "JAN", value: 2400, active: false },
-    { name: "FEV", value: 1400, active: false },
-    { name: "MAR", value: 3800, active: false },
-    { name: "ABR", value: 2900, active: false },
-    { name: "MAI", value: 4100, active: false },
-    { name: "JUN", value: 5120.40 + (transactions.filter(t => t.type === "expense" && t.date.includes("/06/")).reduce((sum, t) => sum + t.value, 0) - 4186.10), active: true },
+    ...historicalChartData,
+    { name: "JUN", value: juneBaseExpense + currentJuneExpense, active: true },
   ];
 
   // If we selected 1 year, we show a wider range

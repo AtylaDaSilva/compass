@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import Dashboard from "@/components/Dashboard";
@@ -10,56 +10,34 @@ import { FolderHeart, Sparkles, ShieldCheck, Target, ArrowLeftRight } from "luci
 // * Types/Interfaces
 import { ITransaction } from "@/types";
 
+import { getTransactions, createTransaction } from "@/api/transactions";
+import { getDashboardConfig } from "@/api/dashboard";
+
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // Initial transactions set matching the image
-  const [transactions, setTransactions] = useState<ITransaction[]>([
-    {
-      id: "1",
-      date: "24/06/2026",
-      description: "Supermercado Central",
-      category: "ALIMENTAÇÃO",
-      type: "expense",
-      value: 450.20
-    },
-    {
-      id: "2",
-      date: "23/06/2026",
-      description: "Transferência Recebida - PJ",
-      category: "SALÁRIO",
-      type: "income",
-      value: 8400.00
-    },
-    {
-      id: "3",
-      date: "22/06/2026",
-      description: "Posto Ipiranga",
-      category: "TRANSPORTE",
-      type: "expense",
-      value: 280.00
-    },
-    {
-      id: "4",
-      date: "21/06/2026",
-      description: "Aluguel Residencial",
-      category: "MORADIA",
-      type: "expense",
-      value: 3200.00
-    },
-    {
-      id: "5",
-      date: "20/06/2026",
-      description: "Netflix Premium",
-      category: "LAZER",
-      type: "expense",
-      value: 55.90
-    }
-  ]);
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [dashboardConfig, setDashboardConfig] = useState<{
+    baseBalance: number;
+    chartData: { name: string; value: number; active: boolean }[];
+    juneBaseExpense: number;
+  } | null>(null);
 
-  // Handle adding a new transaction
+  useEffect(() => {
+    // Fetch transactions from REST API module
+    getTransactions()
+      .then(data => setTransactions(data))
+      .catch(err => console.error("Error fetching transactions:", err));
+
+    // Fetch dashboard config from REST API module
+    getDashboardConfig()
+      .then(data => setDashboardConfig(data))
+      .catch(err => console.error("Error fetching dashboard config:", err));
+  }, []);
+
+  // Handle adding a new transaction via REST API module
   const handleAddTransaction = (newTx: {
     description: string;
     value: number;
@@ -67,12 +45,12 @@ export default function Home() {
     type: "income" | "expense";
     date: string;
   }) => {
-    const tx: ITransaction = {
-      id: String(Date.now()),
-      ...newTx
-    };
-    // Prepend to transaction list
-    setTransactions(prev => [tx, ...prev]);
+    createTransaction(newTx)
+      .then(tx => {
+        // Prepend to transaction list
+        setTransactions(prev => [tx, ...prev]);
+      })
+      .catch(err => console.error("Error adding transaction:", err));
   };
 
   const toggleSidebar = () => {
@@ -84,9 +62,12 @@ export default function Home() {
     switch (activeTab) {
       case "overview":
         return (
-          <Dashboard 
-            transactions={transactions} 
-            onOpenAddModal={() => setIsAddModalOpen(true)} 
+          <Dashboard
+            transactions={transactions}
+            baseBalance={dashboardConfig?.baseBalance ?? 14250.00}
+            historicalChartData={dashboardConfig?.chartData ?? []}
+            juneBaseExpense={dashboardConfig?.juneBaseExpense ?? 934.30}
+            onOpenAddModal={() => setIsAddModalOpen(true)}
           />
         );
       case "transactions":
@@ -97,14 +78,14 @@ export default function Home() {
                 <ArrowLeftRight size={22} className="text-luminous-blue" />
                 Histórico Completo de Transações
               </h4>
-              <button 
+              <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="btn glass-btn-blue btn-sm"
               >
                 Nova Transação
               </button>
             </div>
-            
+
             <div className="table-responsive">
               <table className="glass-table">
                 <thead>
@@ -191,10 +172,10 @@ export default function Home() {
       {/* Main Layout Area */}
       <div className="main-layout">
         {/* Collapsible Left Sidebar */}
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <Sidebar
+          isOpen={sidebarOpen}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
           onAddTransactionClick={() => setIsAddModalOpen(true)}
         />
 
@@ -219,9 +200,9 @@ export default function Home() {
       </div>
 
       {/* Add Transaction Dialog */}
-      <AddTransactionModal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
+      <AddTransactionModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         onAddTransaction={handleAddTransaction}
       />
     </div>

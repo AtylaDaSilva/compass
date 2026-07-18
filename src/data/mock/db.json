@@ -1,0 +1,53 @@
+{
+  "transactions": [
+    {
+      "id": "1",
+      "date": "24/06/2026",
+      "description": "Supermercado Central",
+      "category": "ALIMENTAÇÃO",
+      "type": "expense",
+      "value": 450.20
+    },
+    {
+      "id": "2",
+      "date": "23/06/2026",
+      "description": "Transferência Recebida - PJ",
+      "category": "SALÁRIO",
+      "type": "income",
+      "value": 8400.00
+    },
+    {
+      "id": "3",
+      "date": "22/06/2026",
+      "description": "Posto Ipiranga",
+      "category": "TRANSPORTE",
+      "type": "expense",
+      "value": 280.00
+    },
+    {
+      "id": "4",
+      "date": "21/06/2026",
+      "description": "Aluguel Residencial",
+      "category": "MORADIA",
+      "type": "expense",
+      "value": 3200.00
+    },
+    {
+      "id": "5",
+      "date": "20/06/2026",
+      "description": "Netflix Premium",
+      "category": "LAZER",
+      "type": "expense",
+      "value": 55.90
+    }
+  ],
+  "baseBalance": 14250.00,
+  "chartData": [
+    { "name": "JAN", "value": 2400, "active": false },
+    { "name": "FEV", "value": 1400, "active": false },
+    { "name": "MAR", "value": 3800, "active": false },
+    { "name": "ABR", "value": 2900, "active": false },
+    { "name": "MAI", "value": 4100, "active": false }
+  ],
+  "juneBaseExpense": 934.30
+}
