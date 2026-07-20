@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
-import Dashboard from "@/components/Dashboard";
+import { Navbar, Sidebar, Dashboard, Footer } from "@/components";
 import AddTransactionModal from "@/components/AddTransactionModal";
 import { FolderHeart, Sparkles, ShieldCheck, Target, ArrowLeftRight } from "lucide-react";
 import { ReactState } from "@/state";
@@ -184,18 +182,7 @@ export default function Home() {
           {renderContent()}
 
           {/* Footer inside content area */}
-          <footer className="mt-5 pt-4 border-top border-dark d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-muted" style={{ fontSize: "0.8rem", borderColor: "var(--border-glass) !important" }}>
-            <div className="d-flex align-items-center gap-1">
-              <span className="fw-semibold text-secondary">Carbon Finance</span>
-              <span>© 2026 Carbon Finance Enterprise</span>
-            </div>
-            <div className="d-flex gap-3">
-              <a href="#" className="hover-link text-decoration-none text-muted">Privacy Policy</a>
-              <a href="#" className="hover-link text-decoration-none text-muted">Terms of Service</a>
-              <a href="#" className="hover-link text-decoration-none text-muted">Help Center</a>
-              <a href="#" className="hover-link text-decoration-none text-muted">API Documentation</a>
-            </div>
-          </footer>
+          <Footer />
         </main>
       </div>
 
