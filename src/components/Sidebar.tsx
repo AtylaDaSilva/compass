@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ReactState } from "@/state";
 import { 
   LayoutDashboard, 
   ArrowLeftRight, 
@@ -12,12 +13,11 @@ import {
 
 interface SidebarProps {
   isOpen: boolean;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeTab: ReactState<string>;
   onAddTransactionClick: () => void;
 }
 
-export default function Sidebar({ isOpen, activeTab, setActiveTab, onAddTransactionClick }: SidebarProps) {
+export default function Sidebar({ isOpen, activeTab, onAddTransactionClick }: SidebarProps) {
   const menuItems = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "transactions", label: "Transactions", icon: ArrowLeftRight },
@@ -62,11 +62,11 @@ export default function Sidebar({ isOpen, activeTab, setActiveTab, onAddTransact
         <ul className="nav flex-column gap-2 px-2 mt-4">
           {menuItems.map((item) => {
             const IconComponent = item.icon;
-            const isActive = activeTab === item.id;
+            const isActive = activeTab.state === item.id;
             return (
               <li key={item.id} className="nav-item">
                 <button
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => activeTab.setState(item.id)}
                   className={`nav-link w-100 d-flex align-items-center border-0 text-start py-3 px-3 position-relative ${isOpen ? "gap-3 rounded-3" : "justify-content-center rounded-circle"}`}
                   style={{
                     backgroundColor: isActive ? "rgba(0, 114, 255, 0.08)" : "transparent",

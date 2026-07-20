@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import Dashboard from "@/components/Dashboard";
 import AddTransactionModal from "@/components/AddTransactionModal";
 import { FolderHeart, Sparkles, ShieldCheck, Target, ArrowLeftRight } from "lucide-react";
+import { ReactState } from "@/state";
 
 // * Types/Interfaces
 import { ITransaction } from "@/types";
@@ -14,11 +15,11 @@ import { getTransactions, createTransaction } from "@/api/transactions";
 import { getDashboardConfig } from "@/api/dashboard";
 
 export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const sidebarOpen = new ReactState(useState<boolean>(true));
+  const activeTab = new ReactState(useState<string>("overview"));
+  const isAddModalOpen = new ReactState(useState<boolean>(false));
 
-  const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const transactions = new ReactState(useState<ITransaction[]>([]));
   const [dashboardConfig, setDashboardConfig] = useState<{
     baseBalance: number;
     chartData: { name: string; value: number; active: boolean }[];
@@ -28,7 +29,7 @@ export default function Home() {
   useEffect(() => {
     // Fetch transactions from REST API module
     getTransactions()
-      .then(data => setTransactions(data))
+      .then(data => transactions.setState(data))
       .catch(err => console.error("Error fetching transactions:", err));
 
     // Fetch dashboard config from REST API module
@@ -48,26 +49,26 @@ export default function Home() {
     createTransaction(newTx)
       .then(tx => {
         // Prepend to transaction list
-        setTransactions(prev => [tx, ...prev]);
+        transactions.setState(prev => [tx, ...prev]);
       })
       .catch(err => console.error("Error adding transaction:", err));
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    sidebarOpen.setState(!sidebarOpen.state);
   };
 
   // Render content based on active menu tab
   const renderContent = () => {
-    switch (activeTab) {
+    switch (activeTab.state) {
       case "overview":
         return (
           <Dashboard
-            transactions={transactions}
+            transactions={transactions.state}
             baseBalance={dashboardConfig?.baseBalance ?? 14250.00}
             historicalChartData={dashboardConfig?.chartData ?? []}
             juneBaseExpense={dashboardConfig?.juneBaseExpense ?? 934.30}
-            onOpenAddModal={() => setIsAddModalOpen(true)}
+            onOpenAddModal={() => isAddModalOpen.setState(true)}
           />
         );
       case "transactions":
@@ -79,7 +80,7 @@ export default function Home() {
                 Histórico Completo de Transações
               </h4>
               <button
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => isAddModalOpen.setState(true)}
                 className="btn glass-btn-blue btn-sm"
               >
                 Nova Transação
@@ -97,7 +98,7 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((t) => {
+                  {transactions.state.map((t) => {
                     const isIncome = t.type === "income";
                     const badgeClass = `badge-category badge-${t.category.toLowerCase().replace(/á/g, 'a').replace(/ã/g, 'a')}`;
                     return (
@@ -173,10 +174,9 @@ export default function Home() {
       <div className="main-layout">
         {/* Collapsible Left Sidebar */}
         <Sidebar
-          isOpen={sidebarOpen}
+          isOpen={sidebarOpen.state}
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onAddTransactionClick={() => setIsAddModalOpen(true)}
+          onAddTransactionClick={() => isAddModalOpen.setState(true)}
         />
 
         {/* Content View Area */}
@@ -201,8 +201,8 @@ export default function Home() {
 
       {/* Add Transaction Dialog */}
       <AddTransactionModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        isOpen={isAddModalOpen.state}
+        onClose={() => isAddModalOpen.setState(false)}
         onAddTransaction={handleAddTransaction}
       />
     </div>

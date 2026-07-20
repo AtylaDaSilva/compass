@@ -2,9 +2,10 @@
 
 import React from "react";
 import { Bell, Settings, CreditCard, ChevronRight } from "lucide-react";
+import { ReactState } from "@/state";
 
 interface NavbarProps {
-  sidebarOpen: boolean;
+  sidebarOpen: ReactState<boolean>;
   toggleSidebar: () => void;
 }
 
@@ -15,7 +16,7 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: NavbarProps) {
         <button 
           onClick={toggleSidebar} 
           className="btn btn-link text-white p-0 d-flex align-items-center justify-content-center"
-          title={sidebarOpen ? "Colapsar Menu" : "Expandir Menu"}
+          title={sidebarOpen.state ? "Colapsar Menu" : "Expandir Menu"}
           style={{ textDecoration: "none" }}
         >
           <ChevronRight 
@@ -23,7 +24,7 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: NavbarProps) {
             className="text-secondary" 
             style={{ 
               transition: "transform 0.3s ease", 
-              transform: sidebarOpen ? "rotate(180deg)" : "rotate(0deg)" 
+              transform: sidebarOpen.state ? "rotate(180deg)" : "rotate(0deg)" 
             }} 
           />
         </button>
