@@ -2,70 +2,88 @@
 
 import React, { useState } from "react";
 import { X, Plus, AlertCircle } from "lucide-react";
+import { ReactState } from "@/state";
 
-// * Types/Interfaces
-import { IAddTransactionModalProps } from "@/types";
+import { createTransaction } from "@/api/transactions";
 
-export default function AddTransactionModal({ isOpen, onClose, onAddTransaction }: IAddTransactionModalProps) {
-  const [description, setDescription] = useState("");
-  const [value, setValue] = useState("");
-  const [type, setType] = useState<"income" | "expense">("expense");
-  const [category, setCategory] = useState("ALIMENTAÇÃO");
-  const [date, setDate] = useState(() => {
+import { ITransaction, TTransactionType, TNewTransaction } from "@/types";
+
+interface IAddTransactionModalProps {
+  isAddModalOpen: ReactState<boolean>;
+  transactions: ReactState<ITransaction[]>
+}
+
+export default function AddTransactionModal({ isAddModalOpen, transactions }: IAddTransactionModalProps) {
+  if (!isAddModalOpen.state) return <></>;
+
+  const description = new ReactState(useState<string>(""));
+  const value = new ReactState(useState<string>(""));
+  const type = new ReactState(useState<TTransactionType>("expense"));
+  const category = new ReactState(useState<string>("ALIMENTAÇÃO"));
+  const date = new ReactState(
+    useState<string>(() => {
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`; // formatted as yyyy-mm-dd for input type=date
-  });
+  }));
   
-  const [error, setError] = useState("");
+  const error = new ReactState(useState<string>(""));
 
-  if (!isOpen) return null;
+  // Handle adding a new transaction via REST API module
+    const handleAddTransaction = (newTx: TNewTransaction) => {
+      createTransaction(newTx)
+        .then(tx => {
+          // Prepend to transaction list
+          transactions.setState(prev => [tx, ...prev]);
+        })
+        .catch(err => console.error("Error adding transaction:", err));
+    };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    error.setState("");
 
-    if (!description.trim()) {
-      setError("Por favor, preencha a descrição.");
+    if (!description.state.trim()) {
+      error.setState("Por favor, preencha a descrição.");
       return;
     }
 
-    const numValue = parseFloat(value.replace(",", "."));
+    const numValue = parseFloat(value.state.replace(",", "."));
     if (isNaN(numValue) || numValue <= 0) {
-      setError("Por favor, preencha um valor válido maior que zero.");
+      error.setState("Por favor, preencha um valor válido maior que zero.");
       return;
     }
 
     // Format date from yyyy-mm-dd to dd/mm/yyyy
-    const dateParts = date.split("-");
+    const dateParts = date.state.split("-");
     const formattedDate = dateParts.length === 3 
       ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`
       : new Date().toLocaleDateString("pt-BR");
 
-    onAddTransaction({
-      description,
+    handleAddTransaction({
+      description: description.state,
       value: numValue,
-      type,
-      category,
+      type: type.state,
+      category: category.state,
       date: formattedDate
     });
 
     // Reset fields and close
-    setDescription("");
-    setValue("");
-    setType("expense");
-    setCategory(type === "income" ? "SALÁRIO" : "ALIMENTAÇÃO");
-    onClose();
+    description.setState("");
+    value.setState("");
+    type.setState("expense");
+    category.setState(type.state === "income" ? "SALÁRIO" : "ALIMENTAÇÃO");
+    isAddModalOpen.setState(false)
   };
 
   const handleTypeChange = (newType: "income" | "expense") => {
-    setType(newType);
+    type.setState(newType);
     if (newType === "income") {
-      setCategory("SALÁRIO");
+      category.setState("SALÁRIO");
     } else {
-      setCategory("ALIMENTAÇÃO");
+      category.setState("ALIMENTAÇÃO");
     }
   };
 
@@ -79,7 +97,7 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
             Nova Transação
           </h5>
           <button 
-            onClick={onClose} 
+            onClick={() => isAddModalOpen.setState(false)}
             className="btn btn-link text-secondary p-1 border-0 d-flex align-items-center justify-content-center"
             style={{ borderRadius: "50%", cursor: "pointer" }}
           >
@@ -89,11 +107,11 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          {/* Error Message */}
-          {error && (
+          {/* //*  Error Message */}
+          {error.state && (
             <div className="p-3 rounded-3 d-flex align-items-center gap-2" style={{ backgroundColor: "rgba(255, 94, 98, 0.1)", border: "1px solid rgba(255, 94, 98, 0.2)", color: "var(--luminous-pink)", fontSize: "0.85rem" }}>
               <AlertCircle size={16} />
-              <span>{error}</span>
+              <span>{error.state}</span>
             </div>
           )}
 
@@ -102,7 +120,7 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
             <button
               type="button"
               onClick={() => handleTypeChange("expense")}
-              className={`btn w-50 py-2 border-0 fw-semibold text-sm ${type === "expense" ? "glass-btn-outline-active bg-glow-pink" : "text-secondary"}`}
+              className={`btn w-50 py-2 border-0 fw-semibold text-sm ${type.state === "expense" ? "glass-btn-outline-active bg-glow-pink" : "text-secondary"}`}
               style={{ fontSize: "0.85rem", transition: "all 0.2s ease" }}
             >
               Despesa
@@ -110,7 +128,7 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
             <button
               type="button"
               onClick={() => handleTypeChange("income")}
-              className={`btn w-50 py-2 border-0 fw-semibold text-sm ${type === "income" ? "glass-btn-outline-active bg-glow-blue" : "text-secondary"}`}
+              className={`btn w-50 py-2 border-0 fw-semibold text-sm ${type.state === "income" ? "glass-btn-outline-active bg-glow-blue" : "text-secondary"}`}
               style={{ fontSize: "0.85rem", transition: "all 0.2s ease" }}
             >
               Receita
@@ -124,8 +142,8 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
               type="text" 
               className="glass-input w-100" 
               placeholder="Ex: Supermercado, Salário PJ, etc."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={description.state}
+              onChange={(e) => description.setState(e.target.value)}
             />
           </div>
 
@@ -136,8 +154,8 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
               type="text" 
               className="glass-input w-100" 
               placeholder="0,00"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
+              value={value.state}
+              onChange={(e) => value.setState(e.target.value)}
             />
           </div>
 
@@ -147,10 +165,10 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
             <select 
               className="glass-input w-100"
               style={{ appearance: "none", cursor: "pointer" }}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={category.state}
+              onChange={(e) => category.setState(e.target.value)}
             >
-              {type === "expense" ? (
+              {type.state === "expense" ? (
                 <>
                   <option value="ALIMENTAÇÃO" style={{ backgroundColor: "#0e0e12", color: "#fff" }}>Alimentação</option>
                   <option value="MORADIA" style={{ backgroundColor: "#0e0e12", color: "#fff" }}>Moradia</option>
@@ -173,8 +191,8 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
             <input 
               type="date" 
               className="glass-input w-100" 
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={date.state}
+              onChange={(e) => date.setState(e.target.value)}
             />
           </div>
 
@@ -183,10 +201,10 @@ export default function AddTransactionModal({ isOpen, onClose, onAddTransaction 
             type="submit" 
             className={`btn glass-btn-blue w-100 mt-3 d-flex align-items-center justify-content-center gap-2`}
             style={{ 
-              background: type === "expense" 
+              background: type.state === "expense" 
                 ? "linear-gradient(135deg, var(--luminous-pink), #ff8e91)" 
                 : "linear-gradient(135deg, var(--luminous-blue), var(--luminous-cyan))",
-              boxShadow: type === "expense" 
+              boxShadow: type.state === "expense" 
                 ? "0 4px 15px rgba(255, 94, 98, 0.3)" 
                 : "0 4px 15px rgba(0, 114, 255, 0.3)"
             }}

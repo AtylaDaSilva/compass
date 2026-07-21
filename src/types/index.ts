@@ -1,7 +1,7 @@
-import { ITransaction } from "./types";
-import { IAddTransactionModalProps } from "./types";
+import { ITransaction, TTransactionType, TNewTransaction } from "./types";
 
 export type {
     ITransaction,
-    IAddTransactionModalProps
+    TTransactionType,
+    TNewTransaction,
 }

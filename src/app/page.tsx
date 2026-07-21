@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Navbar, Sidebar, Dashboard, Footer } from "@/components";
-import AddTransactionModal from "@/components/AddTransactionModal";
-import { FolderHeart, Sparkles, ShieldCheck, Target, ArrowLeftRight } from "lucide-react";
+import { AddTransactionModal } from "@/components/modals";
+import { Sparkles, ShieldCheck, Target, ArrowLeftRight } from "lucide-react";
 import { ReactState } from "@/state";
 
 // * Types/Interfaces
 import { ITransaction } from "@/types";
 
-import { getTransactions, createTransaction } from "@/api/transactions";
+import { getTransactions } from "@/api/transactions";
 import { getDashboardConfig } from "@/api/dashboard";
 
 export default function Home() {
@@ -35,22 +35,6 @@ export default function Home() {
       .then(data => setDashboardConfig(data))
       .catch(err => console.error("Error fetching dashboard config:", err));
   }, []);
-
-  // Handle adding a new transaction via REST API module
-  const handleAddTransaction = (newTx: {
-    description: string;
-    value: number;
-    category: string;
-    type: "income" | "expense";
-    date: string;
-  }) => {
-    createTransaction(newTx)
-      .then(tx => {
-        // Prepend to transaction list
-        transactions.setState(prev => [tx, ...prev]);
-      })
-      .catch(err => console.error("Error adding transaction:", err));
-  };
 
   const toggleSidebar = () => {
     sidebarOpen.setState(!sidebarOpen.state);
@@ -186,11 +170,10 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Add Transaction Dialog */}
+      {/* Modals/Dialogs */}
       <AddTransactionModal
-        isOpen={isAddModalOpen.state}
-        onClose={() => isAddModalOpen.setState(false)}
-        onAddTransaction={handleAddTransaction}
+        isAddModalOpen={isAddModalOpen}
+        transactions={transactions}
       />
     </div>
   );
