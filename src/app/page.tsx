@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Navbar, Sidebar, Dashboard, Footer } from "@/components";
 import { AddTransactionModal } from "@/components/modals";
-import { Sparkles, ShieldCheck, Target, ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight } from "lucide-react";
 import { ReactState } from "@/state";
 
 // * Types/Interfaces
@@ -103,47 +103,8 @@ export default function Home() {
             </div>
           </div>
         );
-      case "goals":
-        return (
-          <div className="glass-card text-center py-5">
-            <Target size={48} className="text-luminous-orange mb-3" />
-            <h4 className="text-white fw-bold">Metas Financeiras</h4>
-            <p className="text-secondary mx-auto" style={{ maxWidth: "450px" }}>
-              Planeje seus sonhos e acompanhe seu progresso de poupança com metas financeiras interativas. Esta seção está sendo preparada para o seu perfil.
-            </p>
-            <div className="mt-4">
-              <span className="badge bg-dark border border-secondary text-secondary p-2">Em Desenvolvimento</span>
-            </div>
-          </div>
-        );
-      case "investments":
-        return (
-          <div className="glass-card text-center py-5">
-            <Sparkles size={48} className="text-luminous-cyan mb-3" />
-            <h4 className="text-white fw-bold">Investimentos</h4>
-            <p className="text-secondary mx-auto" style={{ maxWidth: "450px" }}>
-              Monitore sua carteira de investimentos e analise rendimentos históricos integrados ao seu saldo total de forma automatizada.
-            </p>
-            <div className="mt-4">
-              <span className="badge bg-dark border border-secondary text-secondary p-2">Em Desenvolvimento</span>
-            </div>
-          </div>
-        );
-      case "security":
-        return (
-          <div className="glass-card text-center py-5">
-            <ShieldCheck size={48} className="text-luminous-blue mb-3" />
-            <h4 className="text-white fw-bold">Segurança e Logs</h4>
-            <p className="text-secondary mx-auto" style={{ maxWidth: "450px" }}>
-              Suas credenciais e dados financeiros contam com criptografia ponta a ponta de nível militar. Verifique aqui sessões ativas e histórico de segurança.
-            </p>
-            <div className="mt-4">
-              <span className="badge bg-dark border border-secondary text-secondary p-2">Em Desenvolvimento</span>
-            </div>
-          </div>
-        );
       default:
-        return null;
+        return null;  // TODO: Create 404 Page
     }
   };
 

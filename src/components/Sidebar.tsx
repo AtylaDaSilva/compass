@@ -1,13 +1,9 @@
 "use client";
 
-import React from "react";
 import { ReactState } from "@/state";
 import { 
   LayoutDashboard, 
   ArrowLeftRight, 
-  Target, 
-  TrendingUp, 
-  ShieldCheck,
   Plus
 } from "lucide-react";
 
@@ -21,9 +17,6 @@ export default function Sidebar({ isOpen, activeTab, onAddTransactionClick }: Si
   const menuItems = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "transactions", label: "Transactions", icon: ArrowLeftRight },
-    { id: "goals", label: "Goals", icon: Target },
-    { id: "investments", label: "Investments", icon: TrendingUp },
-    { id: "security", label: "Security", icon: ShieldCheck },
   ];
 
   return (
