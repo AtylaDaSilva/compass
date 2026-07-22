@@ -1,33 +1,9 @@
-"use client";
+import { Bell, Settings, CreditCard} from "lucide-react";
 
-import React from "react";
-import { Bell, Settings, CreditCard, ChevronRight } from "lucide-react";
-import { ReactState } from "@/state";
-
-interface NavbarProps {
-  sidebarOpen: ReactState<boolean>;
-  toggleSidebar: () => void;
-}
-
-export default function Navbar({ sidebarOpen, toggleSidebar }: NavbarProps) {
+export default function Navbar() {
   return (
-    <header className="glass-panel py-3 px-4 d-flex align-items-center justify-content-between position-sticky top-0 w-100" style={{ zIndex: 1010, height: "70px" }}>
+    <nav className="glass-panel py-3 px-4 d-flex align-items-center justify-content-between position-sticky top-0 w-100" style={{ zIndex: 1010, height: "70px" }}>
       <div className="d-flex align-items-center gap-3">
-        <button 
-          onClick={toggleSidebar} 
-          className="btn btn-link text-white p-0 d-flex align-items-center justify-content-center"
-          title={sidebarOpen.state ? "Colapsar Menu" : "Expandir Menu"}
-          style={{ textDecoration: "none" }}
-        >
-          <ChevronRight 
-            size={24} 
-            className="text-secondary" 
-            style={{ 
-              transition: "transform 0.3s ease", 
-              transform: sidebarOpen.state ? "rotate(180deg)" : "rotate(0deg)" 
-            }} 
-          />
-        </button>
         <div className="d-flex align-items-center gap-2">
           <div className="bg-glow-blue rounded-3 p-1.5 d-flex align-items-center justify-content-center" style={{ width: "32px", height: "32px" }}>
             <CreditCard size={18} className="text-white" />
@@ -70,6 +46,6 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: NavbarProps) {
           </div>
         </div>
       </div>
-    </header>
+    </nav>
   );
 }

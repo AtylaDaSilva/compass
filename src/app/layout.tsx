@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
+
+// * Components
+import { Navbar } from "@/components";
+
+// * Styles
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 
@@ -22,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={outfit.variable}>
       <body style={{ backgroundColor: "#060608" }}>
+        <Navbar />
         {children}
       </body>
     </html>

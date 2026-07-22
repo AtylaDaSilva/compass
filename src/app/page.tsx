@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navbar, Sidebar, Dashboard, Footer } from "@/components";
+import { Sidebar, Dashboard, Footer } from "@/components";
 import { AddTransactionModal } from "@/components/modals";
 import { ArrowLeftRight } from "lucide-react";
 import { ReactState } from "@/state";
@@ -109,10 +109,7 @@ export default function Home() {
   };
 
   return (
-    <div className="app-container">
-      {/* Top Navbar */}
-      <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-
+    <div className="app-container">      
       {/* Main Layout Area */}
       <div className="main-layout">
         {/* Collapsible Left Sidebar */}
